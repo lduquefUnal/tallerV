@@ -208,5 +208,28 @@ void gpio_config_alternate_function(GPIO_Handler_t *pGPIOHandler) {
         pGPIOHandler->pGPIOx->AFR[1] |= (pGPIOHandler->pinConfig.GPIO_PinAltFunMode << auxPosition);
     }
 }
+void gpio_WritePin(GPIO_Handler_t *pPinHandler, uint8_t newState){
 
+	//Verificamos  si la accion es valida
+	assert_param(IS_GPIO_PIN_ACTION(newState));
 
+	//limpiamos posicion
+	//pPinHandler->pGPIOx->ODR &= ~(SET << pPinhandler->pinConfig.GPIO_PinNumber);
+	if(newState == SET){
+		//TRABAJANDO CON LA PARTE BAJA DEL REGISTRO
+		pPinHandler->pGPIOx->BSRR |= (SET << pPinHandler->pinConfig.GPIO_PinNumber);
+	}
+	else{
+		//trabajando cpn la parte alta
+		pPinHandler->pGPIOx->BSRR |= (SET << (pPinHandler->pinConfig.GPIO_PinNumber + 16 ));
+	}
+}
+uint32_t gpio_ReadPin(GPIO_Handler_t *pPinHandler){
+
+	uint32_t pinValue = 0;
+
+	//cargamos IDR
+	pinValue = (pPinHandler->pGPIOx->IDR  >> pPinHandler->pinConfig.GPIO_PinNumber);
+	pinValue = 0b1 & pinValue;
+	return pinValue;
+}

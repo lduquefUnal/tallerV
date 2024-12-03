@@ -241,7 +241,7 @@ typedef struct
     volatile uint32_t BSRR;     // port bit set/reset register      ADDR_OFFSET: 0x18
     volatile uint32_t LCKR;     // port configuration lock register ADDR_OFFSET: 0x1C
     volatile uint32_t AFR[2];   // alternate function registers     ADDR_OFFSET: 0x20-0x24
-} GPIO_TypeDef;
+}GPIO_TypeDef;
 
 /*
  * Creamos un objeto de la estructura definida y hacemos que quede ubicada exactamente sobre
