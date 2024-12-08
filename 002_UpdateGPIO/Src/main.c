@@ -18,7 +18,8 @@
 
 #include <stdint.h>
 #include <stm32f4xx.h>
-
+#include "stm32_assert.h"
+#include "gpio_driver_hal.h"
 
 int main(void)
 {
