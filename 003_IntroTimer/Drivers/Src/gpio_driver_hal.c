@@ -6,9 +6,8 @@
  */
 
 #include "gpio_driver_hal.h"
-#include "stm32f4xx.h"
 #include "stm32_assert.h"
-
+#include "stm32_assert.h"
 
 /* ==== Headers for private functions ==== */
 static void gpio_enable_clock_peripheral(GPIO_Handler_t *pGPIOHandler);
@@ -26,7 +25,7 @@ static void gpio_config_alternate_function(GPIO_Handler_t *pGPIOHandler);
  * simplemente "activar el periférico o activar la señal de reloj del periférico".
  */
 
-extern void gpio_Config(GPIO_Handler_t *pGPIOHandler) {
+void gpio_Config(GPIO_Handler_t *pGPIOHandler) {
 
     /* Verificamos que el pin seleccionado es correcto. */
     assert_param(IS_GPIO_PIN(pGPIOHandler->pinConfig.GPIO_PinNumber));
@@ -234,4 +233,3 @@ uint32_t gpio_ReadPin(GPIO_Handler_t *pPinHandler){
 	pinValue = 0b1 & pinValue;
 	return pinValue;
 }
-
