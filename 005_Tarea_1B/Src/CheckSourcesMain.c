@@ -1,4 +1,4 @@
-/*
+/*re
  * CheckSourcesMain.c
  *
  *  Created on: Dec 2, 2024
@@ -23,8 +23,8 @@ uint8_t positiveFunction(uint8_t data);
 int dostuff(char *data, int value);
 uint8_t weirdFunction(uint8_t data);
 
-
-
+uint32_t result1;
+int16_t result2;
 /*
  * The main function, where everything happens.
  */
@@ -35,11 +35,10 @@ int main(void)
 
 	// Ciclo principal
 	printf("Hola Mundo!\n");
-
+	rotation =27 ;
 	/* Probando diferentes funciones */
-	rotation = 100 ;
-	checkRotation();
-	getTemperature(23);
+	result1=checkRotation();
+	result2 = getTemperature(1);
 	leaking(350);
 	positiveFunction(2);
 	dostuff("abc", 1024);
@@ -51,26 +50,42 @@ int main(void)
 	return 0;
 }
 
-/* Describir cuales son los problemas que hay en esta función y como se pueden corregir */
+/* checkRotation devuelve un 1 o 0 , pero las condiciones(if) están mal
+ * implementadas  no existe un numero>45 y que luego sea numero<23
+ * por lo que el return será siempre de 1; como 45 siempre es mayor que 25 ,
+ * no es necesario la 2 verificacion con el if(rotation>45)*eliminar linea*
+ *
+ * almacenar el valor en un result_!
+ * */
+
 uint32_t checkRotation(void){
 
-	if(rotation > 25){
-		if(rotation > 45){
-			if(rotation < 23){
-				return 0;
-			}
-		}
-		return 1;
-	}
+//	if(rotation > 25){
+//		if(rotation > 45){
+//			if(rotation < 23){
+//				return 0;
+//			}
+//		}
+//		return 1;
+//	}
+//	return 1;
+
+	if (rotation>25){
 	return 1;
+	}else if (rotation<23){
+	return 0;
+	}return 1 ;
 }
 
-/* Describir cuales son los problemas que hay en esta función y como se pueden corregir */
+/*i--  hace que el for sea infinito   ya que siempre i<10
+ * temperaturaValue se redefine en cada ciclo , pero el unico valor
+ * importante es cuando i = 9  ,y es 9*35= 315 lo que retorna
+ *  */
 int16_t getTemperature(uint8_t getData){
 	if(getData == 1){
 		for(int i = 0; i < 10; i++){
 			temperatureValue = i*35;
-			i--;
+//			i--;
 		}
 		return temperatureValue;
 	}
