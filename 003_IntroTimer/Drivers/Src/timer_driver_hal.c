@@ -143,6 +143,15 @@ void timer_config_interrupt(Timer_Handler_t *pTimerHandler) {
 		else if (pTimerHandler->pTIMx == TIM3) {
 			NVIC_EnableIRQ(TIM3_IRQn);
 		}
+		else if (pTimerHandler->pTIMx == TIM4) {
+					NVIC_EnableIRQ(TIM4_IRQn);
+		}
+		else if (pTimerHandler->pTIMx == TIM5) {
+					NVIC_EnableIRQ(TIM5_IRQn);
+		}
+		else if (pTimerHandler->pTIMx == TIM9) {
+					NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
+		}
 		else {
 			__NOP();
 		}
@@ -158,6 +167,9 @@ void timer_config_interrupt(Timer_Handler_t *pTimerHandler) {
         else if (pTimerHandler->pTIMx == TIM3) {
             NVIC_DisableIRQ(TIM3_IRQn);
         }
+        else if (pTimerHandler->pTIMx == TIM4) {
+                    NVIC_DisableIRQ(TIM4_IRQn);
+                }
         else {
             __NOP();
         }
@@ -189,6 +201,16 @@ void timer_SetState(Timer_Handler_t *pTimerHandler, uint8_t newState) {
 __attribute__((weak)) void Timer2_Callback(void) {
     __NOP();
 }
+__attribute__((weak)) void Timer3_Callback(void) {
+    __NOP();
+}
+__attribute__((weak)) void Timer4_Callback(void) {
+    __NOP();
+}
+__attribute__((weak)) void Timer9_Callback(void) {
+    __NOP();
+}
+
 
 /**
  * void TIM2_IRQHandler(void)
@@ -205,10 +227,30 @@ void TIM2_IRQHandler(void) {
     Timer2_Callback();
 }
 
+void TIM3_IRQHandler(void) {
+    // Limpiamos la bandera que indica que la interrupción se ha generado
+    TIM3->SR &= ~TIM_SR_UIF;
+
+    // Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+    Timer3_Callback();
+}
+
+void TIM4_IRQHandler(void) {
+    // Limpiamos la bandera que indica que la interrupción se ha generado
+    TIM4->SR &= ~TIM_SR_UIF;
+
+    // Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+    Timer4_Callback();
+}
 
 
+void TIM1_BRK_TIM9_IRQHandler(void){
+    // Limpiamos la bandera que indica que la interrupción se ha generado
+    TIM9->SR &= ~TIM_SR_UIF;
 
-
+    // Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+    Timer9_Callback();
+}
 
 
 

@@ -153,7 +153,7 @@ void gpio_config_output_speed(GPIO_Handler_t *pGPIOHandler) {
     /**/
     assert_param(IS_GPIO_OSPEED(pGPIOHandler->pinConfig.GPIO_PinOutputSpeed));
 
-    auxConfig = (pGPIOHandler->pinConfig.GPIO_PinOutputSpeed << 2 * pGPIOHandler->pinConfig.GPIO_PinNumber);
+    auxConfig = (pGPIOHandler->pinConfig.GPIO_PinOutputSpeed << 2 *pGPIOHandler->pinConfig.GPIO_PinNumber);
 
     // Limpiando la posición antes de cargar la nueva configuración
     pGPIOHandler->pGPIOx->OSPEEDR &= ~(0b11 << 2 * pGPIOHandler->pinConfig.GPIO_PinNumber);
@@ -171,7 +171,7 @@ void gpio_config_pullup_pulldown(GPIO_Handler_t *pGPIOHandler) {
 
     /* Verificamos si la configuración cargada para las resistencias es correcta */
     assert_param(IS_GPIO_PUPD(pGPIOHandler->pinConfig.GPIO_PinPuPdControl));
-    auxConfig = (pGPIOHandler->pinConfig.GPIO_PinPuPdControl << 2 * pGPIOHandler->pinConfig.GPIO_PinNumber);
+    auxConfig = (pGPIOHandler->pinConfig.GPIO_PinPuPdControl << 2 *pGPIOHandler->pinConfig.GPIO_PinNumber);
 
     // Limpiando la posición antes de cargar la nueva configuración
     pGPIOHandler->pGPIOx->PUPDR &= ~(0b11 << 2 * pGPIOHandler->pinConfig.GPIO_PinNumber);
@@ -233,3 +233,18 @@ uint32_t gpio_ReadPin(GPIO_Handler_t *pPinHandler){
 	pinValue = 0b1 & pinValue;
 	return pinValue;
 }
+
+void gpio_TogglePin(GPIO_Handler_t *pPinHandler) {
+    // Leer el estado actual del pin
+    uint32_t currentState = gpio_ReadPin(pPinHandler);
+
+    // Si el estado actual es 1 (SET), lo cambiamos a 0 (RESET)
+    if (currentState) {
+        pPinHandler->pGPIOx->BSRR |= (1 << (pPinHandler->pinConfig.GPIO_PinNumber + 16));
+    }
+    // Si el estado actual es 0 (RESET), lo cambiamos a 1 (SET)
+    else {
+        pPinHandler->pGPIOx->BSRR |= (1 << pPinHandler->pinConfig.GPIO_PinNumber);
+    }
+}
+

@@ -36,18 +36,20 @@ int main(void)
 	userLed.pinConfig.GPIO_PinOutputSpeed   = GPIO_OSPEED_MEDIUM;
 	userLed.pinConfig.GPIO_PinPuPdControl   = GPIO_PUPDR_NOTHING;
 
-			/* Cargamos la configuración en los registros que gobiernan el puerto */
+	/* Cargamos la configuración en los registros que gobiernan el puerto */
 	gpio_Config(&userLed);
 
 	gpio_WritePin(&userLed, SET);
+
 	blinkTimer.pTIMx                       = TIM2;               // Seleccionamos TIM2
 	blinkTimer.TIMx_Config.TIMx_Prescaler  = 16000;              // Genera incrementos de 1 ms
-	blinkTimer.TIMx_Config.TIMx_Period     = 250;                // De la mano con el prescaler
+	blinkTimer.TIMx_Config.TIMx_Period     = 500;                // De la mano con el prescaler
 	blinkTimer.TIMx_Config.TIMx_mode       = TIMER_UP_COUNTER;   // Contador ascendente
 	blinkTimer.TIMx_Config.TIMx_InterruptEnable = TIMER_INT_ENABLE;
 	// configuramos el Timer
 	timer_Config(&blinkTimer);
-	timer_SetState(&blinkTimer, TIMER_ON);
+//	timer_SetState(&blinkTimer, TIMER_ON);
+
     /* Loop forever */
 	while(1){
 
