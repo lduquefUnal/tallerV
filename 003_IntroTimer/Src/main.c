@@ -48,7 +48,7 @@ int main(void)
 	blinkTimer.TIMx_Config.TIMx_InterruptEnable = TIMER_INT_ENABLE;
 	// configuramos el Timer
 	timer_Config(&blinkTimer);
-//	timer_SetState(&blinkTimer, TIMER_ON);
+	timer_SetState(&blinkTimer, TIMER_ON);
 
     /* Loop forever */
 	while(1){
@@ -61,7 +61,7 @@ int main(void)
 	 * Overwrite function
 	 */
 void Timer2_Callback(void){
-//	gpio_TogglePin(&userLed);
+	gpio_TogglePin(&userLed);
 }
 
 	/*

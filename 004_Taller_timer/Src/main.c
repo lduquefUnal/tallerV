@@ -28,6 +28,8 @@ GPIO_Handler_t userBtn = {0};
 Timer_Handler_t reloj1 = {0};
 
 uint8_t btnValue = {0};
+uint8_t counter = 0 ;
+uint8_t bandera = 0 ;
 
 int main(void)
 {
@@ -43,7 +45,7 @@ int main(void)
 	gpio_Config(&userLed);
 	gpio_WritePin(&userLed, SET);
 
-	   /* Configuramos el pin */
+	   /* Configuramos el boton */
 	userBtn.pGPIOx                          = GPIOC;
 	userBtn.pinConfig.GPIO_PinNumber        = PIN_13;
 	userBtn.pinConfig.GPIO_PinMode          = GPIO_MODE_IN;
@@ -56,7 +58,7 @@ int main(void)
 
 	reloj1.pTIMx                       = TIM2;               // Seleccionamos TIM2
 	reloj1.TIMx_Config.TIMx_Prescaler  = 16000;              // Genera incrementos de 1 ms  ; define el tiempo.
-	reloj1.TIMx_Config.TIMx_Period     = 500;                // De la mano con el prescaler  ; cada 500 ms se lanza una interrupción
+	reloj1.TIMx_Config.TIMx_Period     = 150;                // De la mano con el prescaler  ; cada 500 ms se lanza una interrupción
 	reloj1.TIMx_Config.TIMx_mode       = TIMER_UP_COUNTER;   // Contador ascendente
 	reloj1.TIMx_Config.TIMx_InterruptEnable = TIMER_INT_ENABLE;
 
@@ -66,11 +68,36 @@ int main(void)
     /* Loop forever */
 	while(1){
 		btnValue = gpio_ReadPin(&userBtn);
-		if(btnValue){
+		while(!btnValue && bandera){
+			bandera  = 0;
+			counter++;
+			btnValue = gpio_ReadPin(&userBtn);
+		}
+		switch(counter){
+		case 0 : {
+			break;
+		}
+		case 1 :{
 			reloj1.TIMx_Config.TIMx_Period = 1000;
 			timer_SetState(&reloj1, TIMER_OFF);
 			timer_Config(&reloj1) ; // subir las configuraciones
 			timer_SetState(&reloj1, TIMER_ON);
+			break;
+		}
+		case 2 : {
+			reloj1.TIMx_Config.TIMx_Period = 600;
+			timer_SetState(&reloj1, TIMER_OFF);
+			timer_Config(&reloj1);
+			timer_SetState(&reloj1, TIMER_ON);
+			break;
+		}
+		case 3 : {
+			reloj1.TIMx_Config.TIMx_Period = 300;
+			timer_SetState(&reloj1, TIMER_OFF);
+			timer_Config(&reloj1);
+			timer_SetState(&reloj1, TIMER_ON);
+			break;
+		}
 		}
 	}
 }
