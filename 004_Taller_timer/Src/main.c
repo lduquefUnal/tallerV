@@ -28,8 +28,8 @@ GPIO_Handler_t userBtn = {0};
 Timer_Handler_t reloj1 = {0};
 
 uint8_t btnValue = {0};
-uint8_t counter = 0 ;
-uint8_t bandera = 0 ;
+uint8_t counter = {0} ;
+uint8_t bandera = {0} ;
 
 int main(void)
 {
@@ -65,14 +65,16 @@ int main(void)
 	// configuramos el Timer
 	timer_Config(&reloj1);
 	timer_SetState(&reloj1, TIMER_ON);
+
     /* Loop forever */
 	while(1){
 		btnValue = gpio_ReadPin(&userBtn);
-		while(!btnValue && bandera){
-			bandera  = 0;
-			counter++;
-			btnValue = gpio_ReadPin(&userBtn);
-		}
+		while(!btnValue && bandera) { // Detecta el botón presionado
+		            bandera = 0; // Bloquea más lecturas hasta que se suelte el botón
+		            counter++;
+		btnValue = gpio_ReadPin(&userBtn);
+		if (counter > 3) counter = 0;
+
 		switch(counter){
 		case 0 : {
 			break;
@@ -100,10 +102,12 @@ int main(void)
 		}
 		}
 	}
+	}
 }
 
 void timer2_Callback(void){
 	gpio_TogglePin(&userLed);
+	bandera=1;
 }
 
 	/*
