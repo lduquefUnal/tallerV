@@ -80,6 +80,27 @@ void timer_enable_clock_peripheral(Timer_Handler_t *pTimerHandler){
     else if(pTimerHandler->pTIMx == TIM3){
         RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
     }
+    else if (pTimerHandler->pTIMx == TIM4) {
+        RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+    }
+    else if (pTimerHandler->pTIMx == TIM5) {
+        RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+    }
+
+        // Temporizadores en APB2 note que ya sale del Bus2
+    else if (pTimerHandler->pTIMx == TIM1) {
+        RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+    }
+    else if (pTimerHandler->pTIMx == TIM9) {
+        RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
+    }
+    else if (pTimerHandler->pTIMx == TIM10) {
+        RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
+    }
+    else if (pTimerHandler->pTIMx == TIM11) {
+    	RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+    }
+
     else{
         __NOP();
     }
@@ -112,7 +133,7 @@ void timer_set_period(Timer_Handler_t *pTimerHandler) {
     // Configuramos el valor del autoreload
     pTimerHandler->pTIMx->ARR = pTimerHandler->TIMx_Config.TIMx_Period - 1;
 }
-
+// Upcounter or Downcounter
 void timer_set_mode(Timer_Handler_t *pTimerHandler){
 //	Verificamos que el modo de funcionamineto es correcto.
 	assert_param(IS_TIMER_MODE(pTimerHandler->TIMx_Config.TIMx_mode));
@@ -147,11 +168,22 @@ void timer_config_interrupt(Timer_Handler_t *pTimerHandler) {
 					NVIC_EnableIRQ(TIM4_IRQn);
 		}
 		else if (pTimerHandler->pTIMx == TIM5) {
-					NVIC_EnableIRQ(TIM5_IRQn);
+		            NVIC_EnableIRQ(TIM5_IRQn);
 		}
+//  para los del bus pb2
+		else if (pTimerHandler->pTIMx == TIM1) {
+            NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+        }
+
 		else if (pTimerHandler->pTIMx == TIM9) {
-					NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
+		    NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
 		}
+		else if (pTimerHandler->pTIMx == TIM10) {
+		    NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+		}
+		else if (pTimerHandler->pTIMx == TIM11) {
+		    NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
+		 }
 		else {
 			__NOP();
 		}
@@ -168,8 +200,23 @@ void timer_config_interrupt(Timer_Handler_t *pTimerHandler) {
             NVIC_DisableIRQ(TIM3_IRQn);
         }
         else if (pTimerHandler->pTIMx == TIM4) {
-                    NVIC_DisableIRQ(TIM4_IRQn);
-                }
+            NVIC_DisableIRQ(TIM4_IRQn);
+        }
+        else if (pTimerHandler->pTIMx == TIM5) {
+            NVIC_DisableIRQ(TIM5_IRQn);
+        }
+        else if (pTimerHandler->pTIMx == TIM1) {
+            NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+        }
+        else if (pTimerHandler->pTIMx == TIM9) {
+            NVIC_DisableIRQ(TIM1_BRK_TIM9_IRQn);
+        }
+        else if (pTimerHandler->pTIMx == TIM10) {
+            NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+        }
+        else if (pTimerHandler->pTIMx == TIM11) {
+            NVIC_DisableIRQ(TIM1_TRG_COM_TIM11_IRQn);
+        }
         else {
             __NOP();
         }
@@ -207,7 +254,16 @@ __attribute__((weak)) void Timer3_Callback(void) {
 __attribute__((weak)) void Timer4_Callback(void) {
     __NOP();
 }
+__attribute__((weak)) void Timer5_Callback(void) {
+    __NOP();
+}
 __attribute__((weak)) void Timer9_Callback(void) {
+    __NOP();
+}
+__attribute__((weak)) void Timer10_Callback(void) {
+    __NOP();
+}
+__attribute__((weak)) void Timer11_Callback(void) {
     __NOP();
 }
 
@@ -243,6 +299,14 @@ void TIM4_IRQHandler(void) {
     Timer4_Callback();
 }
 
+void TIM5_IRQHandler(void) {
+    // Limpiamos la bandera que indica que la interrupción se ha generado
+    TIM5->SR &= ~TIM_SR_UIF;
+
+    // Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+    Timer5_Callback();
+}
+
 
 void TIM1_BRK_TIM9_IRQHandler(void){
     // Limpiamos la bandera que indica que la interrupción se ha generado
@@ -251,8 +315,16 @@ void TIM1_BRK_TIM9_IRQHandler(void){
     // Llamamos a la función que se debe encargar de hacer algo con esta interrupción
     Timer9_Callback();
 }
-
-
-
-
+void TIM1_UP_TIM10_IRQHandler(void){
+	// Limpiamos la bandera que indica que la interrupción se ha generado
+	TIM10->SR &= ~ TIM_SR_UIF;
+	// Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+	Timer10_Callback();
+}
+void TIM1_TRG_COM_TIM11_IRQHandler(void){
+	// Limpiamos la bandera que indica que la interrupción se ha generado
+	TIM10->SR &= ~ TIM_SR_UIF;
+	// Llamamos a la función que se debe encargar de hacer algo con esta interrupción
+	Timer10_Callback();
+}
 

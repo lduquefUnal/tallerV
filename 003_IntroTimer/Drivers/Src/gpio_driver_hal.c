@@ -236,17 +236,6 @@ uint32_t gpio_ReadPin(GPIO_Handler_t *pPinHandler){
 
 void gpio_TogglePin(GPIO_Handler_t *pPinHandler) {
     // Leer el estado actual del pin
-//    uint32_t currentState = gpio_ReadPin(pPinHandler);
-//
-//    // Si el estado actual es 1 (SET), lo cambiamos a 0 (RESET)
-//    if (currentState) {
-//        pPinHandler->pGPIOx->BSRR |= (1 << (pPinHandler->pinConfig.GPIO_PinNumber + 16));
-//    }
-//    // Si el estado actual es 0 (RESET), lo cambiamos a 1 (SET)
-//    else {
-//        pPinHandler->pGPIOx->BSRR |= (1 << pPinHandler->pinConfig.GPIO_PinNumber);
-//    }
-
 	pPinHandler ->pGPIOx->ODR ^= (1<<pPinHandler-> pinConfig.GPIO_PinNumber);
 }
 

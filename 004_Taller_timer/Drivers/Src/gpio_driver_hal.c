@@ -249,5 +249,5 @@ void gpio_TogglePin(GPIO_Handler_t *pPinHandler) {
 //        pPinHandler->pGPIOx->BSRR |= (1 << pPinHandler->pinConfig.GPIO_PinNumber);
 //    }
 
-	pPinHandler->pGPIOx->BSRR ^= (1 << pPinHandler->pinConfig.GPIO_PinNumber);
+	pPinHandler->pGPIOx->ODR ^= (1 << pPinHandler->pinConfig.GPIO_PinNumber);
 }
