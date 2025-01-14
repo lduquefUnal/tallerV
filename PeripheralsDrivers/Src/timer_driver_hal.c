@@ -193,7 +193,7 @@ void timer_config_interrupt(Timer_Handler_t *pTimerHandler) {
         pTimerHandler->pTIMx->DIER &= ~TIM_DIER_UIE;
 
         /* Desactivamos el canal del sistema NVIC para que lea la interrupción */
-        if (pTimerHandler->pTIMx == TIM2) {
+        if (pTimerHandler->pTIMx == 	TIM2) {
             NVIC_DisableIRQ(TIM2_IRQn);
         }
         else if (pTimerHandler->pTIMx == TIM3) {

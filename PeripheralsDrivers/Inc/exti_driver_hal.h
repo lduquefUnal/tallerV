@@ -10,7 +10,7 @@
 
 #include "stm32f4xx.h"
 #include "gpio_driver_hal.h"
-
+#include "exti_driver_hal.h"
 enum
 {
 	EXTERNAL_INTERRUPT_FALLING_EDGE	= 0,
