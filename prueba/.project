@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ControlVolumen</name>
+	<name>prueba</name>
 	<comment></comment>
 	<projects>
-		<project>PeripheralsDrivers</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
-			<triggers>clean,</triggers>
+			<triggers>clean,full,incremental,</triggers>
 			<arguments>
 			</arguments>
 		</buildCommand>

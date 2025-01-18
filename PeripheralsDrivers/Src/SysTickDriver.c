@@ -4,6 +4,9 @@
  *  Created on: 11 ene. 2025
  *      Author: lduquef
  */
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stm32f4xx.h>
 #include "SysTickDriver.h"
 

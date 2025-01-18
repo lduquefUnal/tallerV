@@ -39,6 +39,7 @@ EXTI_Config_t extiClk	 	= {0};
 
 enum{
 	silencio = 0,
+	bajo,
 	volumen_medio,
 	volumen_alto,
 	volumen_muy_alto
@@ -47,7 +48,7 @@ enum{
 uint8_t estado = 0;
 uint8_t data = 0;
 uint8_t clock = 0;
-
+uint8_t encoderEventFlag = 0;
 void init_System(void);
 /*
  * The main function, where everything happens.
@@ -57,21 +58,25 @@ int main (void){
 	init_System();
 
 	while(1){
+		if (encoderEventFlag){
+
 
 		if(data == 0){
-			if(estado == 3){
+			if(estado < 4){
 				estado = 0;
 			}else{
 				estado++;
+				encoderEventFlag = 0 ;
 			}
 		}else{
-			if(estado == 0){
-			estado = 3;
+			if(estado > 4){
+			estado = 0;
 		}else{
 			estado--;
+			encoderEventFlag = 0 ;
 		}
 		}
-
+		}
 
 		switch(estado){
 		case silencio:{
@@ -81,9 +86,16 @@ int main (void){
 			gpio_WritePin(&userLed4, RESET);
 			break;
 		}
-		case volumen_medio:{
+		case bajo:{
 			gpio_WritePin(&userLed1, SET);
 			gpio_WritePin(&userLed2, RESET);
+			gpio_WritePin(&userLed3, RESET);
+			gpio_WritePin(&userLed4, RESET);
+			break;
+			}
+		case volumen_medio:{
+			gpio_WritePin(&userLed1, SET);
+			gpio_WritePin(&userLed2, SET);
 			gpio_WritePin(&userLed3, RESET);
 			gpio_WritePin(&userLed4, RESET);
 			break;
@@ -91,7 +103,7 @@ int main (void){
 		case volumen_alto:{
 			gpio_WritePin(&userLed1, SET);
 			gpio_WritePin(&userLed2, SET);
-			gpio_WritePin(&userLed3, RESET);
+			gpio_WritePin(&userLed3, SET);
 			gpio_WritePin(&userLed4, RESET);
 			break;
 		}
@@ -99,7 +111,7 @@ int main (void){
 			gpio_WritePin(&userLed1, SET);
 			gpio_WritePin(&userLed2, SET);
 			gpio_WritePin(&userLed3, SET);
-			gpio_WritePin(&userLed4, RESET);
+			gpio_WritePin(&userLed4, SET);
 			break;
 		}
 		default:{
@@ -127,8 +139,8 @@ void init_System(void){
 	gpio_Config(&userLed);
 
 	//Configuramos el pin
-	userLed1.pGPIOx							= GPIOC;
-	userLed1.pinConfig.GPIO_PinNumber		= PIN_9;
+	userLed1.pGPIOx							= GPIOB;
+	userLed1.pinConfig.GPIO_PinNumber		= PIN_8;
 	userLed1.pinConfig.GPIO_PinMode			= GPIO_MODE_OUT;
 	userLed1.pinConfig.GPIO_PinOutputType	= GPIO_OTYPE_PUSHPULL;
 	userLed1.pinConfig.GPIO_PinOutputSpeed	= GPIO_OSPEED_MEDIUM;
@@ -138,8 +150,8 @@ void init_System(void){
 	gpio_Config(&userLed1);
 
 	//Configuramos el pin
-	userLed2.pGPIOx							= GPIOB;
-	userLed2.pinConfig.GPIO_PinNumber		= PIN_8;
+	userLed2.pGPIOx							= GPIOC;
+	userLed2.pinConfig.GPIO_PinNumber		= PIN_9;
 	userLed2.pinConfig.GPIO_PinMode			= GPIO_MODE_OUT;
 	userLed2.pinConfig.GPIO_PinOutputType	= GPIO_OTYPE_PUSHPULL;
 	userLed2.pinConfig.GPIO_PinOutputSpeed	= GPIO_OSPEED_MEDIUM;
@@ -196,7 +208,7 @@ void init_System(void){
 	blinkyTimer.TIMx_Config.TIMx_InterruptEnable 	= TIMER_INT_ENABLE;
 
 	timer_Config(&blinkyTimer);
-
+	timer_SetState(&blinkyTimer, TIMER_ON)
 	extiClk.pGPIOHandler					= &userClk;
 	extiClk.edgeType						= EXTERNAL_INTERRUPT_RISING_EDGE;
 
@@ -214,6 +226,9 @@ void Timer2_Callback(void){
 void callback_ExtInt9(void){
 	data = gpio_ReadPin(&userData);
 	clock = gpio_ReadPin(&userClk);
+	if (clock == 1){
+		encoderEventFlag =1 ;
+	}
 }
 
 /*
