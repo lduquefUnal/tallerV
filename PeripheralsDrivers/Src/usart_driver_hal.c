@@ -108,15 +108,17 @@ static void usart_config_parity(USART_Handler_t *ptrUsartHandler){
 		// Verificamos si se ha seleccionado ODD or EVEN
 		if(ptrUsartHandler->USART_Config.parity == USART_PARITY_EVEN){
 			// Es even, entonces cargamos la configuracion adecuada
-			// Escriba acá su código
+			 ptrUsartHandler->ptrUSARTx->CR1 &= ~USART_CR1_PS;  // Paridad Even (PS = 0)
+			 ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_PCE;  // Habilitar paridad
 
 		}else{
 			// Si es "else" significa que la paridad seleccionada es ODD, y cargamos esta configuracion
-			// Escriba acá su código
+			ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_PS;   // Paridad Odd (PS = 1)
+			ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_PCE;
 		}
 	}else{
 		// Si llegamos aca, es porque no deseamos tener el parity-check
-		// Escriba acá su código
+		ptrUsartHandler->ptrUSARTx->CR1 &= ~USART_CR1_PCE;
 	}
 }
 
@@ -232,28 +234,29 @@ static void usart_config_mode(USART_Handler_t *ptrUsartHandler){
 	case USART_MODE_TX:
 	{
 		// Activamos la parte del sistema encargada de enviar
-		// Escriba acá su código
+		ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_TE;
 		break;
 	}
 	case USART_MODE_RX:
 	{
 		// Activamos la parte del sistema encargada de recibir
-		// Escriba acá su código
+		ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_RE;
 		break;
 	}
 	case USART_MODE_RXTX:
 	{
 		// Activamos ambas partes, tanto transmision como recepcion
-		// Escriba acá su código
+        ptrUsartHandler->ptrUSARTx->CR1 |= (USART_CR1_TE | USART_CR1_RE);
 		break;
 	}
 	case USART_MODE_DISABLE:
 	{
 		// Desactivamos ambos canales
-		// Escriba acá su código
+		ptrUsartHandler->ptrUSARTx->CR1 &= ~(USART_CR1_TE | USART_CR1_RE);
 		ptrUsartHandler->ptrUSARTx->CR1 &= ~USART_CR1_UE;
 		break;
 	}
+}
 }
 
 
@@ -265,8 +268,7 @@ static void usart_config_interrupt(USART_Handler_t *ptrUsartHandler){
 		if(ptrUsartHandler->USART_Config.enableIntRX == USART_RX_INTERRUP_ENABLE){
 			// Como está activada, debemos configurar la interrupción por recepción
 			/* Debemos activar la interrupción RX en la configuración del USART */
-			// Escriba acá su código
-
+			ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_RXNEIE;
 			/* Debemos matricular la interrupción en el NVIC */
 			/* Lo debemos hacer para cada uno de las posibles opciones que tengamos (USART1, USART2, USART6) */
 			if(ptrUsartHandler->ptrUSARTx == USART1){
@@ -275,11 +277,13 @@ static void usart_config_interrupt(USART_Handler_t *ptrUsartHandler){
 			}
 
 			else if(ptrUsartHandler->ptrUSARTx == USART2){
-				// Escriba acá su código
+				__NVIC_EnableIRQ(USART2_IRQn);
+				__NVIC_SetPriority(USART2_IRQn, 2);
 				}
 
 			else if(ptrUsartHandler->ptrUSARTx == USART6){
-				// Escriba acá su código
+				__NVIC_EnableIRQ(USART6_IRQn);
+				__NVIC_SetPriority(USART6_IRQn, 2);
 			}
 		}
 		else{
@@ -291,7 +295,7 @@ static void usart_config_interrupt(USART_Handler_t *ptrUsartHandler){
 /**
  *
  */
-static void usart_enable_peripheral(USART_Handler_t *ptrUsartHandler){
+void usart_enable_peripheral(USART_Handler_t *ptrUsartHandler){
 	if(ptrUsartHandler->USART_Config.mode != USART_MODE_DISABLE){
 		ptrUsartHandler->ptrUSARTx->CR1 |= USART_CR1_UE;
 	}
@@ -304,8 +308,8 @@ int usart_WriteChar(USART_Handler_t *ptrUsartHandler, int dataToSend ){
 	while( !(ptrUsartHandler->ptrUSARTx->SR & USART_SR_TXE)){
 		__NOP();
 	}
+	ptrUsartHandler-> ptrUSARTx->DR = dataToSend;
 
-	// Escriba acá su código
 
 	return dataToSend;
 }
@@ -314,7 +318,11 @@ int usart_WriteChar(USART_Handler_t *ptrUsartHandler, int dataToSend ){
  *
  */
 void usart_writeMsg(USART_Handler_t *ptrUsartHandler, char *msgToSend ){
-
+	while (*msgToSend != '\0')
+	{
+		usart_WriteChar(ptrUsartHandler, *msgToSend);
+		msgToSend++;
+	}
 }
 
 uint8_t usart_getRxData(void){
@@ -326,7 +334,11 @@ uint8_t usart_getRxData(void){
  */
 void USART2_IRQHandler(void){
 	// Evaluamos si la interrupción que se dio es por RX
-	// Escriba acá su código
+	if(USART2->SR & USART_SR_RXNE)
+	{
+		auxRxData = USART2->DR;
+		usart2_RxCallback();
+	}
 }
 
 /* Handler de la interrupción del USART
@@ -334,7 +346,11 @@ void USART2_IRQHandler(void){
  */
 void USART6_IRQHandler(void){
 	// Evaluamos si la interrupción que se dio es por RX
-	// Escriba acá su código
+	if(USART6->SR & USART_SR_RXNE)
+	{
+		auxRxData = USART6->DR;
+		usart6_RxCallback();
+	}
 }
 
 /* Handler de la interrupción del USART
@@ -342,7 +358,11 @@ void USART6_IRQHandler(void){
  */
 void USART1_IRQHandler(void){
 	// Evaluamos si la interrupción que se dio es por RX
-	// Escriba acá su código
+	if(USART1->SR & USART_SR_RXNE)
+	{
+		auxRxData = USART1->DR;
+		usart1_RxCallback();
+	}
 }
 
 
