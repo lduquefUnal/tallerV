@@ -89,19 +89,15 @@ typedef struct
 	uint8_t			dataInputSize;
 	uint8_t			transmisionBuffer[64];
 	uint8_t			dataOutputSize;
-	uint8_t 		receivedChar;
 }USART_Handler_t;
 
 
 
 /* Definicion de los prototipos para las funciones del USART */
 void usart_Config(USART_Handler_t *ptrUsartHandler);
-
 int  usart_WriteChar(USART_Handler_t *ptrUsartHandler, int dataToSend );
 void usart_writeMsg(USART_Handler_t *ptrUsartHandler, char *msgToSend );
-
-uint8_t usart_getRxData(USART_Handler_t *ptrUsartHandler);
-
+uint8_t usart_getRxData(void);
 void usart1_RxCallback(void);
 void usart2_RxCallback(void);
 void usart6_RxCallback(void);
