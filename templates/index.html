@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard TOTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard de Códigos TOTP</h1>
+        
+        <table id="totpTable">
+            <thead>
+                <tr>
+                    <th>Cuenta</th>
+                    <th>Código</th>
+                    <th>Tiempo Restante</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <!-- Modal para confirmar eliminación -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <p id="deleteAccountName"></p>
+            <form id="deleteForm">
+                <input type="hidden" id="delete_account_name" name="account_name">
+                <div class="form-group">
+                    <label for="delete_password">Contraseña de admin:</label>
+                    <input type="password" id="delete_password" name="password" required>
+                </div>
+                <button type="submit" class="delete-btn">Eliminar Cuenta</button>
+            </form>
+            <div id="deleteMessage" class="message"></div>
+        </div>
+    </div>
+    <!-- Modal de autenticación -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Autenticación Requerida</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="password">Contraseña de admin:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Verificar</button>
+            </form>
+            <div id="authMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar QR -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Agregar Nueva Cuenta</h2>
+            <form id="qrForm">
+                <div class="form-group">
+                    <label for="account_name">Nombre de usuario:</label>
+                    <input type="text" id="account_name" name="account_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="qr_file">Imagen QR:</label>
+                    <input type="file" id="qr_file" name="qr_file" accept="image/*" required>
+                </div>
+                <button type="submit">Agregar Cuenta</button>
+            </form>
+            <div id="qrMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- Botón flotante -->
+    <button id="addQRBtn" class="floating-btn">+</button>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
