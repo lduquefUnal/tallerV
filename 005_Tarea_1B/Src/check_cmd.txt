@@ -1,0 +1,15 @@
+cppcheck --template=gcc --enable=all --platform=unix64 --std=c11 --suppress=missingIncludeSystem --verbose --suppress=unusedFunction --inconclusive CheckSourcesMain.c
+
+
+Análisis del comando `cppcheck`
+
+2. Opciones usadas:
+   --template=gcc: Genera una salida con el formato del compilador GCC.
+   --enable=all: Activa todas las verificaciones disponibles (rendimiento, estilo, seguridad, etc.).
+   --platform=unix64: Define la plataforma objetivo como un sistema Unix de 64 bits.
+   --std=c11: Usa el estándar C11 para analizar el código.
+   --suppress=missingIncludeSystem: Ignora advertencias sobre encabezados del sistema que faltan.
+   --verbose: Activa el modo detallado, mostrando más información del análisis.
+   --suppress=unusedFunction: Suprime advertencias sobre funciones definidas pero no usadas.
+   --inconclusive: Habilita verificaciones adicionales que pueden generar falsos positivos.
+   CheckSourcesMain.c: Especifica el archivo fuente que será analizado.
